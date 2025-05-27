@@ -2,6 +2,7 @@ from datetime import datetime
 import pprint
 import random
 from functools import reduce
+import sys
 
 class Collection:
     """
