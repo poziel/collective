@@ -450,7 +450,6 @@ class Collection:
             "ModificationCount": self.modification_count,
             "ModificationHistory": self.modification_history,
             "IsHomogeneous": len(set(type(item) for item in self._items)) == 1 if self._items else True,
-            "UpdateFrequencyPerSecond": len(self.modification_history) / lifetime if lifetime > 0 else None,
             "AllUnique": len(self._items) == len(set(self._items))
         }
 
