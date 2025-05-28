@@ -470,22 +470,6 @@ class Collection:
             "AllUnique": len(self._items) == len(set(self._items))
         }
 
-    @classmethod
-    def FromFile(cls, file: 'File') -> 'Collection':
-        """
-        Creates a new Collection instance from all lines in a File object.
-
-        Parameters:
-        file (File): The File object to read lines from.
-
-        Returns:
-        Collection: A new Collection instance containing each line from the file as an item.
-        """
-        if not isinstance(file, File):
-            raise TypeError("The parameter must be a File instance.")
-        lines = file.ReadLines()
-        return cls(lines)
-
     def __iter__(self):
         """
         Makes the list iterable.
