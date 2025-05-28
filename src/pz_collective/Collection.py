@@ -69,6 +69,7 @@ class Collection:
             self._items = list(args)
         self.created_at = datetime.now()
         self.updated_at = datetime.now()
+        self.modification_count = 0
 
     def Add(self, item) -> 'Collection':
         """
@@ -82,24 +83,22 @@ class Collection:
         """
         self._items.append(item)
         self.updated_at = datetime.now()
+        self.modification_count += 1
         return self
 
-    def Remove(self, item) -> bool:
+    def Remove(self, item) -> 'Collection':
         """
         Removes an item from the list if it exists.
         Returns True if the item was removed, False if the item was not found.
 
         Parameters:
         item: The item to be removed from the list.
-
-        Returns:
-        bool: True if the item was removed, False otherwise.
         """
         if item in self._items:
             self._items.remove(item)
             self.updated_at = datetime.now()
-            return True
-        return False
+            self.modification_count += 1
+        return self
 
     def Get(self, index: int):
         """
@@ -121,6 +120,7 @@ class Collection:
         """
         self._items.clear()
         self.updated_at = datetime.now()
+        self.modification_count += 1
         return self
 
     def Count(self) -> int:
@@ -181,6 +181,7 @@ class Collection:
         if isinstance(other, Collection):
             self._items.extend(other.ToList())
             self.updated_at = datetime.now()
+            self.modification_count += 1
         else:
             raise TypeError("Argument must be of type Collection.")
         return self
@@ -198,6 +199,7 @@ class Collection:
         """
         self._items.sort(reverse=reverse)
         self.updated_at = datetime.now()
+        self.modification_count += 1
         return self
 
     def Reverse(self) -> 'Collection':
@@ -209,6 +211,7 @@ class Collection:
         """
         self._items.reverse()
         self.updated_at = datetime.now()
+        self.modification_count += 1
         return self
 
     def Filter(self, condition) -> 'Collection':
@@ -221,6 +224,8 @@ class Collection:
         Returns:
         Collection: A new collection containing only the items that match the condition.
         """
+        self.updated_at = datetime.now()
+        self.modification_count += 1
         return Collection([item for item in self._items if condition(item)])
 
     def Map(self, func) -> 'Collection':
@@ -233,6 +238,8 @@ class Collection:
         Returns:
         Collection: A new collection with the results of applying the function to each item.
         """
+        self.updated_at = datetime.now()
+        self.modification_count += 1
         return Collection([func(item) for item in self._items])
 
     def Reduce(self, func, initial=None):
@@ -246,6 +253,8 @@ class Collection:
         Returns:
         The reduced value.
         """
+        self.updated_at = datetime.now()
+        self.modification_count += 1
         return reduce(func, self._items, initial)
 
     def RemoveAt(self, index: int) -> 'Collection':
@@ -264,6 +273,7 @@ class Collection:
         if 0 <= index < len(self._items):
             del self._items[index]
             self.updated_at = datetime.now()
+            self.modification_count += 1
         else:
             raise IndexError("Index out of range.")
         return self
@@ -285,6 +295,7 @@ class Collection:
         if 0 <= index <= len(self._items):
             self._items.insert(index, item)
             self.updated_at = datetime.now()
+            self.modification_count += 1
         else:
             raise IndexError("Index out of range.")
         return self
@@ -296,6 +307,8 @@ class Collection:
         Returns:
         Collection: A new collection with distinct items.
         """
+        self.updated_at = datetime.now()
+        self.modification_count += 1
         return Collection(list(set(self._items)))
 
     def Extend(self, items) -> 'Collection':
@@ -310,6 +323,7 @@ class Collection:
         """
         self._items.extend(items)
         self.updated_at = datetime.now()
+        self.modification_count += 1
         return self
 
     def Find(self, condition):
@@ -337,6 +351,8 @@ class Collection:
         Returns:
         Collection: A new flat collection with the results of applying the function to each item.
         """
+        self.updated_at = datetime.now()
+        self.modification_count += 1
         flattened_items = [sub_item for item in self._items for sub_item in func(item)]
         return Collection(flattened_items)
 
@@ -386,6 +402,8 @@ class Collection:
         Returns:
         Collection: A new collection containing tuples of paired items.
         """
+        self.updated_at = datetime.now()
+        self.modification_count += 1
         return Collection(list(zip(self._items, other.ToList())))
 
     def All(self, condition) -> bool:
@@ -448,7 +466,6 @@ class Collection:
             "MemorySize": sum(sys.getsizeof(item) for item in self._items),
             "LifetimeSeconds": (datetime.now() - self.created_at).total_seconds(),
             "ModificationCount": self.modification_count,
-            "ModificationHistory": self.modification_history,
             "IsHomogeneous": len(set(type(item) for item in self._items)) == 1 if self._items else True,
             "AllUnique": len(self._items) == len(set(self._items))
         }

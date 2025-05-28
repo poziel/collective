@@ -1,3 +1,5 @@
+from .Collection import Collection
+
 class Queryable:
     """
     Queryable Class
